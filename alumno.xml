@@ -6,8 +6,8 @@
         <asignaturas_matriculadas>6</asignaturas_matriculadas>
     </alumno>
     <alumno id_estudiante="a8">
-        <nombre>Ricardo</nombre>
-        <apellidos>Sornosa</apellidos>
+        <nombre>Selena</nombre>
+        <apellidos>Garcia</apellidos>
         <asignaturas_matriculadas>7</asignaturas_matriculadas>
     </alumno>
 </alumnos>

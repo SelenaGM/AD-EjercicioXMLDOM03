@@ -10,6 +10,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -27,9 +28,10 @@ public class Main {
                         inscribirAlumno(sc, listaAlumnos);
                         break;
                     case 2:
-                        addAlumnosFichero(sc, listaAlumnos);
+                        guardarAlumnos(listaAlumnos);
                         break;
-                    case 3: addAlumnosLista(listaAlumnos);
+                    case 3:
+                        listaAlumnos = cargarAlumnos();
 
                         break;
                     case 4:
@@ -50,8 +52,8 @@ public class Main {
         }
     }
 
-    private static void addAlumnosLista(ArrayList<AlumnoModel> listaAlumnos) throws ParserConfigurationException, IOException, SAXException {
-    listaAlumnos.clear();
+    private static ArrayList cargarAlumnos() throws ParserConfigurationException, IOException, SAXException {
+        ArrayList<AlumnoModel> nuevaListaAlumnos = new ArrayList<>();
         File ficheroEmpleadosXML = new File("alumno.xml");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -73,18 +75,19 @@ public class Main {
                 int asignaturas = Integer.parseInt(alumno.getElementsByTagName("asignaturas_matriculadas").item(0).getTextContent());
 
                 AlumnoModel am = new AlumnoModel(id,nombre,apellidos,asignaturas);
-                listaAlumnos.add(am);
+                nuevaListaAlumnos.add(am);
 
             }
 
 
         }
-        for (AlumnoModel lista: listaAlumnos) {
+        for (AlumnoModel lista: nuevaListaAlumnos) {
             System.out.println(lista);
         }
+        return nuevaListaAlumnos;
     }
 
-    private static void addAlumnosFichero(Scanner sc, ArrayList<AlumnoModel> listaAlumnos) throws ParserConfigurationException, TransformerException {
+    private static void guardarAlumnos(ArrayList<AlumnoModel> listaAlumnos) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document document = db.newDocument();
@@ -96,35 +99,34 @@ public class Main {
 
 
         for (int i = 0; i < listaAlumnos.size(); i++) {
-            Element alumno1 = document.createElement("alumno");
-            raiz.appendChild(alumno1);
+            Element alumno = document.createElement("alumno");
+            raiz.appendChild(alumno);
             Attr id1 = document.createAttribute("id_estudiante");
             id1.setValue(listaAlumnos.get(i).getId());
-            alumno1.setAttributeNode(id1);
+            alumno.setAttributeNode(id1);
 
-            Element nombre1 = document.createElement("nombre");
-            alumno1.appendChild(nombre1);
-            nombre1.setTextContent(listaAlumnos.get(i).getNombre());
+            Element nombre = document.createElement("nombre");
+            nombre.setTextContent(listaAlumnos.get(i).getNombre());
+            alumno.appendChild(nombre);
 
-            Element apellidos1= document.createElement("apellidos");
-            alumno1.appendChild(apellidos1);
-            apellidos1.setTextContent(listaAlumnos.get(i).getApellidos());
+            Element apellidos= document.createElement("apellidos");
+            apellidos.setTextContent(listaAlumnos.get(i).getApellidos());
+            alumno.appendChild(apellidos);
 
-            Element asignatura1 = document.createElement("asignaturas_matriculadas");
-            alumno1.appendChild(asignatura1);
-            asignatura1.setTextContent(String.valueOf(listaAlumnos.get(i).getAsignaturas_matriculadas()));
-
+            Element asignatura = document.createElement("asignaturas_matriculadas");
+            asignatura.setTextContent(String.valueOf(listaAlumnos.get(i).getAsignaturas_matriculadas()));
+            alumno.appendChild(asignatura);
         }
 
 
 
         TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer optimus = tf.newTransformer();
+        Transformer t = tf.newTransformer();
         DOMSource ds = new DOMSource(document);
 
-        optimus.setOutputProperty(OutputKeys.INDENT,"yes");
+        t.setOutputProperty(OutputKeys.INDENT,"yes");
         StreamResult result = new StreamResult(new File("alumno.xml"));
-        optimus.transform(ds,result);
+        t.transform(ds,result);
 
     }
 
@@ -137,16 +139,17 @@ public class Main {
         String apellidos = sc.nextLine();
         System.out.println("Dime las asignaturas matriculadas");
         int asignaturas = sc.nextInt();
-        AlumnoModel alumnoModel = new AlumnoModel(id, nombre,apellidos,asignaturas);
-        listaAlumnos.add(alumnoModel);
+        sc.nextLine();
+
+        listaAlumnos.add(new AlumnoModel(id, nombre,apellidos,asignaturas));
 
     }
 
     private static int menu(Scanner sc) {
         System.out.println("Elige una opción");
-        System.out.println("1-Inscribir alumno");
-        System.out.println("2-Añadir alumnos al fichero");
-        System.out.println("3-Leer alumnos a la lista");
+        System.out.println("1-Introducir alumno");
+        System.out.println("2-Guardar alumnos");
+        System.out.println("3-Cargar alumnos");
         System.out.println("4-Salir");
         return sc.nextInt();
     }
