@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<alumnos>
+    <alumno id_estudiante="a22">
+        <nombre>Enrique</nombre>
+        <apellidos>Perez Gandia</apellidos>
+        <asignaturas_matriculadas>6</asignaturas_matriculadas>
+    </alumno>
+    <alumno id_estudiante="a8">
+        <nombre>Ricardo</nombre>
+        <apellidos>Sornosa</apellidos>
+        <asignaturas_matriculadas>7</asignaturas_matriculadas>
+    </alumno>
+</alumnos>
